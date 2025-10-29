@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Text-to-Speech App with Download</title>
+<style>
+  :root {
+    --bg-light: #f0f4f8;
+    --text-light: #333;
+    --btn-light: #4CAF50;
+    --bg-dark: #121212;
+    --text-dark: #eee;
+    --btn-dark: #1E88E5;
+  }
+
+  body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    background-color: var(--bg-light);
+    color: var(--text-light);
+    transition: all 0.3s ease;
+  }
+
+  h1 { margin-bottom: 5px; }
+  p { margin-top: 0; }
+
+  textarea {
+    width: 90%;
+    max-width: 600px;
+    height: 150px;
+    padding: 10px;
+    font-size: 16px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    resize: none;
+  }
+
+  select, input[type=range], button {
+    margin: 5px;
+    padding: 8px 12px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+
+  button {
+    cursor: pointer;
+    background: var(--btn-light);
+    color: white;
+    border: none;
+    transition: background 0.3s ease;
+  }
+
+  button:hover { opacity: 0.9; }
+
+  .controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; }
+  label { margin: 0 5px; }
+
+  .dark-mode { background-color: var(--bg-dark); color: var(--text-dark); }
+  .dark-mode button { background-color: var(--btn-dark); }
+</style>
+</head>
+<body>
+<h1>Advanced Text-to-Speech App</h1>
+<p>Type text, select language, then Play or Download MP3!</p>
+
+<textarea id="text-input" placeholder="Type something here..."></textarea>
+
+<div class="controls">
+  <label for="language-select">Language:</label>
+  <select id="language-select">
+    <option value="en-us">English (US)</option>
+    <option value="en-gb">English (UK)</option>
+    <option value="es-es">Spanish</option>
+    <option value="fr-fr">French</option>
+    <option value="de-de">German</option>
+    <option value="it-it">Italian</option>
+    <option value="ja-jp">Japanese</option>
+    <option value="ko-kr">Korean</option>
+    <option value="zh-cn">Chinese</option>
+  </select>
+
+  <label for="speed">Speed:</label>
+  <input type="range" id="speed" min="0.5" max="2" step="0.1" value="1">
+</div>
+
+<div class="controls">
+  <button id="play-btn">Play</button>
+  <button id="download-btn">Download MP3</button>
+  <button id="toggle-theme-btn">Toggle Dark/Light Mode</button>
+</div>
+
+<script>
+// ====== SET YOUR VOICERSS API KEY HERE ======
+const VOICERSS_API_KEY = "b4fb82145c1f483280c094317f0023a4"; // Get free key at https://www.voicerss.org/
+
+const textInput = document.getElementById("text-input");
+const languageSelect = document.getElementById("language-select");
+const speedInput = document.getElementById("speed");
+const playBtn = document.getElementById("play-btn");
+const downloadBtn = document.getElementById("download-btn");
+const toggleThemeBtn = document.getElementById("toggle-theme-btn");
+
+// Play TTS in browser using Audio
+function playTTS() {
+  const text = textInput.value.trim();
+  if (!text) return alert("Type some text first!");
+
+  const lang = languageSelect.value;
+  const speed = speedInput.value;
+
+  const url = `https://api.voicerss.org/?key=${VOICERSS_API_KEY}&hl=${lang}&src=${encodeURIComponent(text)}&r=${(speed-1)*10}&c=MP3`;
+
+  const audio = new Audio(url);
+  audio.play();
+}
+
+// Download MP3 file
+function downloadTTS() {
+  const text = textInput.value.trim();
+  if (!text) return alert("Type some text first!");
+
+  const lang = languageSelect.value;
+  const speed = speedInput.value;
+
+  const url = `https://api.voicerss.org/?key=${VOICERSS_API_KEY}&hl=${lang}&src=${encodeURIComponent(text)}&r=${(speed-1)*10}&c=MP3`;
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "tts.mp3";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+// Dark/Light mode toggle
+function toggleTheme() {
+  document.body.classList.toggle("dark-mode");
+}
+
+playBtn.addEventListener("click", playTTS);
+downloadBtn.addEventListener("click", downloadTTS);
+toggleThemeBtn.addEventListener("click", toggleTheme);
+</script>
+</body>
+</html>
